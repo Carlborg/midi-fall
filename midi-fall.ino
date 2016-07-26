@@ -98,12 +98,13 @@ Bounce bouncers[8] = {
 
 //MIDI
 const int setupChannel = 13; // the MIDI channel on which system settings are sent, such as what the operating channel should be
-int operatingChannel = 1; // the MIDI channel on which it currently sends and recieves notes
+int operatingChannel = 3; // the MIDI channel on which it currently sends and recieves notes
 
 const int tonicCC = 22; // according to standard cc table cc 22-31 are undefined to aviod interfering with other stuff
 const int scaleCC = 23;
 const int mirrorCC = 24;
-const int transposeCC=25;
+const int transposeCC = 25;
+const int channelCC = 26;
 
 
 // Stuff for the midi clock--------
@@ -216,6 +217,9 @@ void OnControlChange(byte channel, byte control, byte value) { //this is where s
     }
      else if (control == transposeCC){
       SetscaleTranspose(value);
+    }
+    else if(control == channelCC){
+      SetCh(value);
     }
     SetColorsFromScale();
     for (int col=0;col<COLS;col++){
@@ -528,4 +532,14 @@ void SetMatrixValue(byte row, byte col, byte value){
 
 byte GetMatrixValue(byte row, byte col){
   return matrixValues[row][Mirrored(col)];
+}
+
+
+void SetCh(byte cc){
+  if(cc<16){
+    operatingChannel = cc;
+  }
+  else{
+    operatingChannel = 15;
+  }
 }
